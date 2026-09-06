@@ -1,0 +1,2088 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<title>RAKKA HUB — دليل مدينة الرقّة</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 1.5 21.5 7v10L12 22.5 2.5 17V7z' fill='none' stroke='%23AF7F42' stroke-width='2'/><path d='M12 7l4.5 2.6v5.2L12 17.5l-4.5-2.7V9.6z' fill='%23AF7F42'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&family=Noto+Kufi+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #18202f;
+    --muted: #68748A;
+    --card: #DCE1E6;
+    --accent: #AF7F42;
+    --accent2: #B8734F;
+    --accent-hi: #C2924F;
+    --accent-lo: #7D5F33;
+    --line: rgba(104,116,138,.35);
+    --line-soft: rgba(104,116,138,.18);
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; overflow-x:hidden; }
+  html[dir="rtl"] body{ font-family:'Noto Kufi Arabic','Golos Text',sans-serif; }
+  html[dir="rtl"] *{ letter-spacing:normal !important; }
+  body{
+    background: var(--bg);
+    color: var(--card);
+    font-family: 'Golos Text','Noto Kufi Arabic',sans-serif;
+    font-variant-numeric: tabular-nums;
+    min-height: 100vh;
+    overflow-x: hidden;
+    width: 100%;
+  }
+  button{ font: inherit; touch-action: manipulation; }
+  svg{ flex-shrink:0; }
+  h1, h2, h3, p, span, button, .tag, .chip{ overflow-wrap: break-word; }
+  .hero, .cats, .subs, .list-wrap, footer{ position:relative; }
+
+  /* Телефон и числа в RTL: всегда слева направо */
+  html[dir="rtl"] .ltr-num{ direction:ltr; unicode-bidi:isolate; display:inline-flex; align-items:center; gap:7px; }
+  html[dir="rtl"] .ltr-num > span{ direction:ltr; unicode-bidi:isolate; }
+
+  /* ============ Фон: месяц (маска), орбиты, искры, мерцание, падающие звёзды ============ */
+  .bg-deco{ position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+  .moon{
+    position:absolute; top:78px; inset-inline-end:5%;
+    width:170px; height:170px; border-radius:50%;
+    background: radial-gradient(circle at 38% 34%, #F6E3B8, var(--accent) 72%);
+    /* настоящий месяц: вырез через маску — прозрачный серп, без чёрного круга */
+    -webkit-mask: radial-gradient(circle at 66% 28%, transparent 0 46%, #000 47%);
+    mask: radial-gradient(circle at 66% 28%, transparent 0 46%, #000 47%);
+    /* усиленное свечение по форме месяца */
+    filter: drop-shadow(0 0 20px rgba(175,127,66,.6)) drop-shadow(0 0 70px rgba(175,127,66,.35));
+    animation: floaty 9s ease-in-out infinite;
+    will-change: transform;
+  }
+  .ring{
+    position:absolute; border-radius:50%;
+    border:1px dashed rgba(175,127,66,.16);
+    animation: spin 70s linear infinite;
+  }
+  .r1{ bottom:-220px; inset-inline-start:-170px; width:520px; height:520px; }
+  .r2{ bottom:-120px; inset-inline-start:-70px; width:300px; height:300px;
+       border-color: rgba(104,116,138,.14); animation-duration:52s; animation-direction:reverse; }
+  .r3{ top:-130px; inset-inline-end:-90px; width:280px; height:280px;
+       border-color: rgba(175,127,66,.12); animation-duration:64s; animation-direction:reverse; }
+  .spark{
+    position:absolute; border-radius:50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px 2px rgba(175,127,66,.55);
+    animation: drift 16s linear infinite;
+  }
+  .s1{ width:5px; height:5px; top:24%; inset-inline-start:10%; }
+  .s2{ width:3px; height:3px; top:46%; inset-inline-start:22%; animation-duration:21s; animation-delay:-6s; }
+  .s3{ width:4px; height:4px; top:64%; inset-inline-start:8%;  animation-duration:13s; animation-delay:-3s; }
+  .s4{ width:3px; height:3px; top:14%; inset-inline-start:42%; animation-duration:18s; animation-delay:-9s; }
+  .s5{ width:5px; height:5px; top:78%; inset-inline-start:36%; animation-duration:15s; animation-delay:-5s; }
+  .s6{ width:3px; height:3px; top:34%; inset-inline-start:64%; animation-duration:19s; animation-delay:-12s; opacity:.4; }
+  /* мерцающие звёзды */
+  .tw{
+    position:absolute; width:4px; height:4px; border-radius:50%;
+    background:#E8CB9C;
+    box-shadow: 0 0 8px 2px rgba(232,203,156,.5);
+    animation: twinkle 3.2s ease-in-out infinite;
+  }
+  .tw1{ top:12%; inset-inline-start:28%; }
+  .tw2{ top:32%; inset-inline-start:56%; animation-delay:-1.1s; }
+  .tw3{ top:70%; inset-inline-start:16%; animation-delay:-2.2s; width:5px; height:5px; }
+  /* падающие звёзды с хвостом */
+  .shoot{
+    position:absolute; top:18%; left:68%;
+    width:110px; height:2px; border-radius:2px;
+    background: linear-gradient(90deg, transparent, rgba(240,213,168,.95));
+    transform: rotate(-35deg);
+    opacity:0;
+    animation: shoot 11s ease-in infinite;
+  }
+  .shoot2{
+    top:8%; left:84%; width:80px;
+    transform: rotate(-28deg);
+    animation: shoot 13s ease-in infinite;
+    animation-delay: 5.5s;
+  }
+  @keyframes floaty{ 0%,100%{ margin-top:0; } 50%{ margin-top:-16px; } }
+  @keyframes drift{
+    0%{ transform:translate(0,0); opacity:0; }
+    12%{ opacity:.65; } 85%{ opacity:.3; }
+    100%{ transform:translate(46px,-130px); opacity:0; }
+  }
+  @keyframes twinkle{
+    0%,100%{ opacity:.15; transform:scale(.7); }
+    50%{ opacity:.9; transform:scale(1.15); }
+  }
+  @keyframes shoot{
+    0%{ transform:translate(0,0) rotate(-35deg); opacity:0; }
+    3%{ opacity:1; }
+    12%{ transform:translate(-380px,250px) rotate(-35deg); opacity:0; }
+    100%{ transform:translate(-380px,250px) rotate(-35deg); opacity:0; }
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  /* ============ 3D-куб ============ */
+  .cube-stage{
+    width:54px; height:54px;
+    perspective: 340px;
+    display:inline-flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .cube{
+    position:relative; width:54px; height:54px;
+    transform-style: preserve-3d;
+    animation: cubeSpin 14s linear infinite;
+  }
+  @keyframes cubeSpin{
+    from{ transform: rotateX(-18deg) rotateY(0deg); }
+    to  { transform: rotateX(-18deg) rotateY(360deg); }
+  }
+  .cube .face{
+    position:absolute; inset:0;
+    border:1.5px solid var(--accent);
+    border-radius:9px;
+    background: rgba(175,127,66,.13);
+    box-shadow: inset 0 0 18px rgba(175,127,66,.28);
+  }
+  .cube .f1{ transform: translateZ(27px); }
+  .cube .f2{ transform: rotateY(180deg) translateZ(27px); }
+  .cube .f3{ transform: rotateY(90deg)  translateZ(27px); }
+  .cube .f4{ transform: rotateY(-90deg) translateZ(27px); }
+  .cube .f5{ transform: rotateX(90deg)  translateZ(27px); }
+  .cube .f6{ transform: rotateX(-90deg) translateZ(27px); }
+
+  /* ============ Шапка ============ */
+  .topbar{
+    position: sticky; top:0; z-index:50;
+    background: rgba(24,32,47,.94);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    display:flex; align-items:center; gap:12px;
+    height:64px; padding:0 24px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:11px;
+    font-weight:800; font-size:1.05rem; letter-spacing:.12em; color:var(--card);
+    text-decoration:none; white-space:nowrap;
+    text-shadow: 0 2px 12px rgba(0,0,0,.5);
+    min-width:0;
+  }
+  .brand svg{ color: var(--accent); filter: drop-shadow(0 2px 6px rgba(175,127,66,.5)); }
+  .brand-sub{
+    font-family:'Noto Kufi Arabic',sans-serif;
+    font-weight:400; font-size:.8rem; color:var(--muted);
+    letter-spacing:0; align-self:flex-end; padding-bottom:2px;
+  }
+  html[dir="rtl"] .brand{ font-family:'Golos Text',sans-serif; }
+  .lang-switch{
+    margin-inline-start:auto;
+    display:flex; border:1px solid var(--line); border-radius:9px; overflow:hidden;
+    flex-shrink:0;
+  }
+  .lang-switch button{
+    background:none; border:none; cursor:pointer;
+    color:var(--muted); font-weight:700; font-size:.78rem;
+    padding:8px 13px; transition: background .2s, color .2s;
+    min-width:40px; text-align:center;
+  }
+  .lang-switch button.on{ background: var(--accent); color: var(--bg); }
+  .btn-sub{
+    display:inline-flex; align-items:center; gap:7px;
+    background: linear-gradient(180deg, var(--accent-hi), var(--accent));
+    color:var(--bg); border:none;
+    border-radius:9px; padding:8px 14px; font-size:.8rem; font-weight:800;
+    cursor:pointer; white-space:nowrap; touch-action: manipulation; flex-shrink:0;
+    box-shadow: 0 3px 0 var(--accent-lo), 0 8px 18px -6px rgba(0,0,0,.5);
+    transition: filter .2s, transform .15s;
+  }
+  .btn-sub:hover{ filter: brightness(1.08); }
+  .btn-sub:active{ transform: translateY(2px); box-shadow: 0 1px 0 var(--accent-lo); }
+  .btn-admin{
+    display:inline-flex; align-items:center; gap:8px;
+    background:none; border:1px solid var(--accent); color:var(--accent);
+    border-radius:9px; padding:8px 15px; font-size:.82rem; font-weight:600;
+    cursor:pointer; transition: background .2s, transform .15s;
+    white-space:nowrap; touch-action: manipulation; flex-shrink:0;
+  }
+  .btn-admin:hover{ background: rgba(175,127,66,.16); }
+  .btn-admin:active{ transform: scale(.96); }
+
+  /* ============ Hero ============ */
+  .hero{ max-width: 980px; margin:0 auto; padding: 62px 24px 26px; }
+  .hero-meta{
+    color:var(--muted); font-size:.72rem; font-weight:600;
+    letter-spacing:.28em; text-transform:uppercase;
+    display:flex; align-items:center; gap:14px;
+  }
+  html[dir="rtl"] .hero-meta{ letter-spacing:0; }
+  .hero-meta::after{ content:""; flex:1; height:1px; background:var(--line); }
+  .hero h1{
+    font-size: clamp(2.1rem, 5vw, 3.4rem);
+    font-weight:800; line-height:1.15; margin:14px 0 4px;
+    text-shadow: 0 4px 22px rgba(0,0,0,.45);
+    display:flex; align-items:center; flex-wrap:wrap; gap:8px;
+  }
+  .hero h1 em{ font-style:normal; color:var(--accent); text-shadow: 0 0 26px rgba(175,127,66,.4); }
+  .hero-alt{
+    color:var(--muted); font-size:1.05rem; font-weight:600;
+    border-inline-start:3px solid var(--accent);
+    padding-inline-start:12px; margin-top:6px;
+  }
+  html[dir="ltr"] .hero-alt{ font-family:'Noto Kufi Arabic',sans-serif; }
+  .hero-desc{
+    color:var(--card); opacity:.72; max-width:560px;
+    margin-top:18px; line-height:1.65; font-size:.98rem;
+  }
+  .search{
+    display:flex; align-items:center; gap:11px;
+    max-width:560px; margin-top:26px;
+    border:1px solid var(--line); border-radius:12px;
+    padding:13px 16px; background: rgba(220,225,230,.06);
+    transition: border-color .2s, box-shadow .25s;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,.28);
+  }
+  .search:focus-within{ border-color: var(--accent); box-shadow: inset 0 2px 6px rgba(0,0,0,.28), 0 0 0 3px rgba(175,127,66,.18); }
+  .search.live{ animation: searchPulse .9s ease-in-out infinite; }
+  @keyframes searchPulse{
+    0%,100%{ box-shadow: inset 0 2px 6px rgba(0,0,0,.28), 0 0 0 0 rgba(175,127,66,.4); }
+    50%{ box-shadow: inset 0 2px 6px rgba(0,0,0,.28), 0 0 0 6px rgba(175,127,66,0); }
+  }
+  .search svg{ color: var(--muted); transition: color .25s; }
+  .search.live svg{ color: var(--accent); animation: wobble 1s ease-in-out infinite; }
+  @keyframes wobble{
+    0%,100%{ transform: rotate(0deg); }
+    25%{ transform: rotate(-12deg); }
+    75%{ transform: rotate(10deg); }
+  }
+  .search input{
+    flex:1; background:none; border:none; outline:none;
+    color:var(--card); font:inherit; font-size:.98rem; min-width:0;
+  }
+  .search input::placeholder{ color:var(--muted); }
+
+  /* ============ Категории ============ */
+  .cats{
+    max-width:980px; margin:30px auto 0; padding:0 24px;
+    display:flex; gap:9px; overflow-x:auto;
+    scrollbar-width:thin; scrollbar-color:var(--muted) transparent;
+    touch-action: pan-x manipulation;
+    -webkit-overflow-scrolling: touch;
+  }
+  .cat-pill{
+    flex-shrink:0; display:inline-flex; align-items:baseline; gap:9px;
+    border:1px solid var(--line); border-radius:999px;
+    background:none; color:var(--card);
+    padding:9px 17px; font-size:.88rem; font-weight:600; cursor:pointer;
+    transition: background .2s, border-color .2s, color .2s, transform .15s, box-shadow .2s;
+    white-space:nowrap; touch-action: manipulation;
+  }
+  .cat-pill .cnt{ font-size:.72rem; color:var(--muted); font-weight:500; }
+  .cat-pill:hover{ border-color: var(--accent); }
+  .cat-pill.on{
+    background: linear-gradient(180deg, var(--accent-hi), var(--accent));
+    border-color:var(--accent); color:var(--bg);
+    box-shadow: 0 3px 0 var(--accent-lo), 0 10px 22px -6px rgba(175,127,66,.45);
+  }
+  .cat-pill.on .cnt{ color:var(--bg); opacity:.7; }
+  .cat-pill:active{ transform: translateY(2px); box-shadow: 0 1px 0 var(--accent-lo); }
+
+  /* ============ Подкатегории ============ */
+  .subs{ max-width:980px; margin:14px auto 0; padding:0 24px; display:block; }
+  .chip{
+    background:none; border:1px solid var(--line); color:var(--card);
+    border-radius:999px; padding:6px 13px;
+    font-size:.8rem; font-weight:500; cursor:pointer;
+    transition: border-color .2s, color .2s, background .2s, transform .15s;
+    touch-action: manipulation;
+  }
+  .chip:hover{ border-color:var(--accent); }
+  .chip.on{
+    border-color:var(--accent); color:var(--accent);
+    background:rgba(175,127,66,.14); font-weight:700;
+    box-shadow: 0 3px 10px -4px rgba(175,127,66,.4);
+  }
+  .chip:active{ transform: scale(.96); }
+
+  .level-cards{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(146px, 1fr));
+    gap:9px; margin-top:6px;
+    width:100%;
+  }
+  .level-card{
+    display:flex; flex-direction:column; gap:2px;
+    background: rgba(220,225,230,.05);
+    border:1px solid var(--line); border-radius:10px;
+    padding:10px 12px; cursor:pointer; text-align:start;
+    transition: border-color .2s, transform .18s, box-shadow .2s, background .2s;
+    touch-action: manipulation;
+    animation: fadeUp .45s both;
+    min-width:0;
+  }
+  .level-card .lc-top{ display:flex; align-items:center; gap:7px; min-width:0; }
+  .level-card .lc-arrow{
+    margin-inline-start:auto; color:var(--muted);
+    transition: transform .2s, color .2s;
+    opacity:.7;
+  }
+  .level-card .lc-title{ font-size:.88rem; font-weight:700; color:var(--card); line-height:1.22; min-width:0; }
+  .level-card .lc-sub{ font-size:.66rem; color:var(--muted); font-weight:500; }
+  .level-card .lc-cnt{
+    font-size:.64rem; color:var(--accent); font-weight:700;
+    display:inline-block; margin-top:3px;
+  }
+  .level-card:hover{
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px -12px rgba(0,0,0,.5);
+    background: rgba(175,127,66,.08);
+  }
+  .level-card:hover .lc-arrow{ color: var(--accent); transform: translateX(3px); }
+  html[dir="rtl"] .level-card:hover .lc-arrow{ transform: translateX(-3px); }
+  .level-card.on{
+    border-color: var(--accent2);
+    background: rgba(184,115,79,.13);
+    box-shadow: 0 5px 18px -10px rgba(184,115,79,.5), inset 0 1px 0 rgba(255,255,255,.06);
+  }
+  .level-card.on .lc-title{ color: var(--accent2); }
+  .level-card.on .lc-arrow{ color: var(--accent2); }
+
+  .subjects-block{
+    margin-top:16px; padding-top:14px;
+    border-top:1px solid var(--line);
+    display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+    animation: fadeUp .4s both;
+  }
+  .subjects-title{
+    display:flex; align-items:center; gap:10px;
+    font-size:.68rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--muted);
+    flex-basis:100%; margin-bottom:2px;
+  }
+  html[dir="rtl"] .subjects-title{ text-transform:none; letter-spacing:0; }
+  .subjects-title::after{ content:""; flex:1; height:1px; background:var(--line-soft); }
+  .subjects-title svg{ color: var(--accent); }
+
+  .btn-add{
+    margin-inline-start:auto;
+    display:inline-flex; align-items:center; gap:7px;
+    background: linear-gradient(180deg, var(--accent-hi), var(--accent));
+    color:var(--bg); border:none;
+    border-radius:9px; padding:9px 16px;
+    font-size:.85rem; font-weight:700; cursor:pointer;
+    box-shadow: 0 3px 0 var(--accent-lo), 0 8px 18px -6px rgba(0,0,0,.5);
+    transition: filter .2s, transform .15s;
+    touch-action: manipulation;
+  }
+  .btn-add:hover{ filter: brightness(1.08); }
+  .btn-add:active{ transform: translateY(2px); box-shadow: 0 1px 0 var(--accent-lo); }
+  .btn-add.hidden{ display:none; }
+
+  /* ============ Список ============ */
+  .list-wrap{ max-width:980px; margin:38px auto 110px; padding:0 24px; perspective: 1600px; }
+  .list-head{
+    display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;
+    padding-bottom:14px; border-bottom:2px solid var(--accent);
+  }
+  .list-head h2{ font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight:800; text-shadow: 0 3px 14px rgba(0,0,0,.4); }
+  .list-head .cnt{ color:var(--muted); font-size:.85rem; font-weight:600; }
+  .conn{
+    margin-inline-start:auto;
+    display:inline-flex; align-items:center; gap:7px;
+    font-size:.68rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--muted);
+  }
+  html[dir="rtl"] .conn{ text-transform:none; letter-spacing:0; }
+  .conn .dot{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--muted); flex-shrink:0;
+    transition: background .3s;
+  }
+  .conn.online .dot{ background: var(--accent); animation: pulse 2.2s infinite; }
+  .conn.cache  .dot{ background: var(--accent2); }
+  @keyframes pulse{
+    0%,100%{ box-shadow:0 0 0 0 rgba(175,127,66,.55); }
+    50%{ box-shadow:0 0 0 5px rgba(175,127,66,0); }
+  }
+  .sheet{
+    background:var(--card); color:var(--bg);
+    border-radius:16px; overflow:hidden; margin-top:6px;
+    box-shadow: 0 30px 70px -25px rgba(0,0,0,.55),
+                inset 0 1px 0 rgba(255,255,255,.5);
+    transform-style: preserve-3d;
+  }
+  .row{
+    display:grid;
+    grid-template-columns: 60px minmax(0,1fr) auto;
+    gap: 8px 22px;
+    padding: 25px 22px;
+    border-bottom: 1px solid var(--line-soft);
+    position:relative;
+    animation: fadeUp .45s both;
+    transition: transform .22s ease, box-shadow .22s ease, background .25s;
+    transform-style: preserve-3d;
+    cursor:pointer;
+  }
+  .row:last-child{ border-bottom:none; }
+  .row::before{
+    content:""; position:absolute; inset-inline-start:0; top:0; bottom:0;
+    width:3px; background:var(--accent); opacity:0; transition:opacity .2s;
+  }
+  .row:hover{
+    background: rgba(175,127,66,.1);
+    transform: translateY(-4px) rotateX(1.4deg);
+    box-shadow: 0 22px 40px -18px rgba(0,0,0,.45), 0 0 0 1px rgba(175,127,66,.25);
+  }
+  .row:hover::before{ opacity:1; }
+  .num{
+    font-weight:800; font-size:1.35rem;
+    color:var(--accent); opacity:.9; padding-top:2px;
+    text-shadow: 0 2px 0 rgba(125,95,51,.25);
+  }
+  .row-body{ min-width:0; }
+  .row-top{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .row-top h3{ font-size:1.12rem; font-weight:700; line-height:1.3; color:var(--bg); }
+  .tag{
+    background: rgba(175,127,66,.2); color: var(--bg);
+    font-size:.68rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+    padding:4px 9px; border-radius:5px; white-space:nowrap;
+    box-shadow: inset 0 -1px 0 rgba(125,95,51,.35);
+  }
+  html[dir="rtl"] .tag{ text-transform:none; letter-spacing:0; }
+  .row-desc{
+    color:var(--muted); font-size:.9rem; line-height:1.55; margin-top:8px;
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+  }
+  .row-meta{ display:flex; flex-wrap:wrap; gap:7px 24px; margin-top:12px; font-size:.9rem; }
+  .row-meta span{ display:inline-flex; align-items:center; gap:7px; min-width:0; }
+  .row-meta svg{ color: var(--accent); }
+  .row-meta .loc{ color:var(--muted); }
+  .row-actions{
+    display:flex; flex-direction:column; gap:9px; justify-content:center; align-items:stretch;
+  }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:7px;
+    border-radius:9px; padding:9px 15px;
+    font-size:.83rem; font-weight:700; cursor:pointer;
+    text-decoration:none; border:1px solid transparent;
+    transition: filter .2s, background .2s, transform .15s, box-shadow .15s;
+    touch-action: manipulation;
+  }
+  .btn:active{ transform: translateY(2px); }
+  .btn-solid{
+    background: linear-gradient(180deg, var(--accent-hi), var(--accent));
+    color:var(--bg);
+    box-shadow: 0 3px 0 var(--accent-lo), 0 8px 18px -6px rgba(0,0,0,.4);
+  }
+  .btn-solid:hover{ filter:brightness(1.08); }
+  .btn-solid:active{ box-shadow: 0 1px 0 var(--accent-lo); }
+  .btn-outline{ border-color:var(--accent); color:var(--bg); box-shadow: inset 0 1px 0 rgba(255,255,255,.6); }
+  .btn-outline:hover{ background:rgba(175,127,66,.15); }
+  .btn-danger{ border-color:var(--accent2); color:var(--accent2); box-shadow: inset 0 1px 0 rgba(255,255,255,.5); }
+  .btn-danger:hover{ background:rgba(184,115,79,.14); }
+  .empty{ padding:64px 24px; text-align:center; color:var(--muted); }
+  .empty svg{ opacity:.5; margin-bottom:14px; }
+  .empty h4{ color:var(--bg); font-weight:700; margin-bottom:6px; font-size:1.05rem; }
+  .empty p{ font-size:.9rem; max-width:340px; margin:0 auto; line-height:1.6; }
+
+  .detail-tag{ display:inline-block; margin-bottom:12px; }
+  .detail-desc{ color:var(--muted); line-height:1.6; margin:6px 0 14px; font-size:.95rem; }
+  .detail-meta{ display:flex; flex-direction:column; gap:9px; margin:14px 0 18px; font-size:.95rem; }
+  .detail-meta span{ display:inline-flex; align-items:center; gap:9px; }
+  .detail-meta svg{ color: var(--muted); }
+  .detail-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+  .detail-actions .btn{ flex:1; min-width:130px; }
+
+  /* ============ Модалка подписки ============ */
+  .plans{ display:flex; gap:10px; margin-top:6px; }
+  .plan{
+    flex:1; display:flex; flex-direction:column; gap:6px;
+    background: #18202f;
+    border:1px solid var(--accent); border-radius:12px;
+    padding:16px 12px; cursor:pointer; text-align:center;
+    transition: border-color .2s, transform .18s, box-shadow .2s, background .2s;
+    touch-action: manipulation;
+    animation: fadeUp .45s both;
+    box-shadow: 0 6px 16px -8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.07);
+  }
+  .plan:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 12px 26px -10px rgba(0,0,0,.55);
+    background: #1E2839;
+  }
+  .plan.on{
+    background: #1E2839;
+    border:2px solid var(--accent);
+    box-shadow: 0 8px 22px -10px rgba(175,127,66,.55), inset 0 1px 0 rgba(255,255,255,.1);
+  }
+  .plan-name{ font-size:.82rem; font-weight:700; color:#DCE1E6; }
+  .plan-price{
+    font-size:1.45rem; font-weight:800; color: var(--accent-hi);
+    text-shadow: 0 2px 8px rgba(0,0,0,.6);
+  }
+  .plan-note{ font-size:.72rem; font-weight:600; color:#9BA8B6; }
+  .sub-contact{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    margin-top:14px; padding:10px 14px;
+    border:1px solid var(--line); border-radius:10px;
+    background: #18202f; color:#DCE1E6;
+    font-size:.8rem; font-weight:600; flex-wrap:wrap;
+  }
+  .sub-contact .ltr-num{ color: var(--accent-hi); font-weight:800; }
+  .sub-hint{
+    margin-top:14px; font-size:.72rem; color:var(--muted);
+    line-height:1.5; text-align:center;
+  }
+
+  /* ============ Появление при скролле ============ */
+  .reveal{ opacity:0; transform: translateY(26px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.vis{ opacity:1; transform:none; }
+
+  /* ============ Футер с номером ============ */
+  footer{
+    border-top:1px solid var(--line);
+    padding:22px 24px 110px; text-align:center;
+    color:var(--muted); font-size:.8rem;
+    line-height:1.7;
+  }
+  .footer-phone{
+    display:inline-flex; align-items:center; gap:6px;
+    color: var(--accent); font-weight:700;
+    text-decoration:none; font-size:.78rem;
+    direction:ltr;
+    margin-top:2px;
+    transition: filter .2s;
+  }
+  .footer-phone:hover{ filter: brightness(1.25); text-decoration:underline; }
+  .footer-phone svg{ color: var(--accent); }
+
+  /* ============ Плавающие кнопки ============ */
+  .float-logout{
+    position:fixed; bottom:26px; left:50%; transform:translateX(-50%);
+    z-index:60; display:none;
+    align-items:center; gap:9px;
+    background: linear-gradient(180deg, #C9855D, var(--accent2));
+    color:var(--bg);
+    border:none; border-radius:999px;
+    padding:13px 22px; font-weight:700; font-size:.9rem; cursor:pointer;
+    box-shadow: 0 4px 0 #8a5034, 0 16px 34px -6px rgba(0,0,0,.55);
+    transition: filter .2s;
+    touch-action: manipulation;
+    max-width:92vw; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .float-logout:hover{ filter:brightness(1.1); }
+  .float-logout:active{ transform: translateX(-50%) translateY(3px); box-shadow: 0 1px 0 #8a5034; }
+  .float-logout.show{ display:inline-flex; animation: fadeUp .35s both; }
+
+  .float-sub{
+    position:fixed; bottom:26px; inset-inline-end:26px;
+    z-index:60;
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    background: linear-gradient(180deg, var(--accent-hi), var(--accent));
+    color:var(--bg); border:none; border-radius:999px;
+    padding:15px 22px; font-weight:800; font-size:.92rem; cursor:pointer;
+    box-shadow: 0 4px 0 var(--accent-lo), 0 14px 30px -6px rgba(0,0,0,.55);
+    transition: filter .2s, transform .15s;
+    touch-action: manipulation;
+    animation: subFloat 3.5s ease-in-out infinite;
+  }
+  .float-sub:hover{ filter: brightness(1.1); }
+  .float-sub:active{ transform: translateY(3px); box-shadow: 0 1px 0 var(--accent-lo); animation-play-state:paused; }
+  .float-sub svg{ color: var(--bg); }
+  @keyframes subFloat{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-5px); }
+  }
+
+  /* ============ Тосты ============ */
+  #toastWrap{
+    position:fixed; top:78px; left:50%; transform:translateX(-50%);
+    z-index:10050;
+    display:flex; flex-direction:column; gap:9px; align-items:center;
+    pointer-events:none; width:min(92vw, 480px);
+  }
+  .toast{
+    background:var(--card); color:var(--bg);
+    border-inline-start:4px solid var(--accent);
+    border-radius:10px; padding:13px 20px;
+    font-size:.9rem; font-weight:600;
+    box-shadow: 0 18px 40px -10px rgba(0,0,0,.5);
+    animation: fadeUp .3s both; max-width:100%;
+    word-break: break-word;
+  }
+  .toast.err{ border-inline-start-color: var(--accent2); }
+  .toast.out{ opacity:0; transform:translateY(-8px); transition:opacity .3s, transform .3s; }
+
+  /* ============ Модальные окна ============ */
+  .overlay{
+    position:fixed; inset:0;
+    z-index:9999;
+    background:rgba(24,32,47,.55);
+    backdrop-filter: blur(9px); -webkit-backdrop-filter: blur(9px);
+    display:flex; align-items:center; justify-content:center;
+    padding:20px; opacity:0; pointer-events:none;
+    transition: opacity .28s;
+    touch-action: manipulation;
+  }
+  .overlay.show{ opacity:1; pointer-events:auto; }
+  .modal{
+    background:var(--card); color:var(--bg);
+    width:100%; max-width:460px; max-height:90vh; overflow-y:auto;
+    border-radius:16px; padding:30px 28px;
+    transform: translateY(16px) scale(.96) rotateX(2deg);
+    transition: transform .28s;
+    box-shadow: 0 50px 110px -20px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.6);
+    touch-action: manipulation;
+    -webkit-overflow-scrolling: touch;
+  }
+  .overlay.show .modal{ transform:none; }
+  .modal-head{ display:flex; align-items:flex-start; gap:14px; margin-bottom:8px; }
+  .modal-head h3{ font-size:1.3rem; font-weight:800; flex:1; line-height:1.25; color:var(--bg); }
+  .modal-close{
+    background:none; border:none; color:var(--muted); cursor:pointer;
+    padding:9px; border-radius:9px; display:flex; flex-shrink:0;
+    touch-action: manipulation;
+  }
+  .modal-close:hover{ color:var(--accent2); background:rgba(104,116,138,.15); }
+  .modal-close:active{ transform: scale(.92); }
+  .modal-back{
+    background:rgba(175,127,66,.14); color:var(--bg);
+    border:1px solid var(--accent); border-radius:9px;
+    padding:7px 14px 7px 10px; font-weight:700; font-size:.8rem;
+    cursor:pointer; display:inline-flex; align-items:center; gap:7px;
+    margin-bottom:14px;
+    touch-action: manipulation;
+    transition: background .2s, transform .15s;
+  }
+  .modal-back:hover{ background:rgba(175,127,66,.24); }
+  .modal-back:active{ transform: scale(.96); }
+  html[dir="rtl"] .modal-back{ padding:7px 10px 7px 14px; }
+  .modal-desc{ color:var(--muted); font-size:.9rem; line-height:1.55; margin-bottom:22px; }
+
+  .field{ margin-bottom:17px; }
+  .field label{
+    display:block; font-size:.72rem; font-weight:700;
+    letter-spacing:.07em; text-transform:uppercase;
+    color:var(--muted); margin-bottom:7px;
+  }
+  html[dir="rtl"] .field label{ text-transform:none; }
+  .field label .req{ color: var(--accent2); }
+  .field input, .field select, .field textarea{
+    width:100%;
+    background: var(--bg); color: var(--card);
+    border:1px solid transparent; border-radius:10px;
+    padding:12px 14px; font:inherit; font-size:16px;
+    outline:none; transition: border-color .2s, box-shadow .2s;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,.3);
+    touch-action: manipulation;
+  }
+  .field textarea{ resize:vertical; min-height:96px; line-height:1.55; }
+  .field input:focus, .field select:focus, .field textarea:focus{
+    border-color: var(--accent);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,.3), 0 0 0 3px rgba(175,127,66,.18);
+  }
+  .field input::placeholder, .field textarea::placeholder{ color:var(--muted); }
+  .field select{ appearance:none; cursor:pointer; }
+  .counter{ text-align:end; font-size:.72rem; color:var(--muted); margin-top:5px; }
+  .counter.over{ color:var(--accent2); font-weight:700; }
+  .modal-actions{ display:flex; gap:11px; margin-top:24px; }
+  .modal-actions .btn{ flex:1; padding:13px; font-size:.92rem; }
+
+  .modal-submit{
+    width:100%; margin-top:4px; padding:15px; font-size:1rem !important;
+    touch-action: manipulation;
+    min-height:52px;
+  }
+  .modal-submit:active{ transform: scale(.98); filter:brightness(1.15); }
+  .modal-submit[disabled]{ opacity:.55; pointer-events:none; }
+
+  .err-banner{
+    display:none;
+    background: var(--accent2); color: var(--card);
+    border-radius:10px; padding:12px 16px;
+    font-size:.88rem; font-weight:700;
+    margin-bottom:18px; text-align:center;
+    word-break: break-word;
+    box-shadow: 0 6px 16px -6px rgba(184,115,79,.6);
+  }
+  .err-banner.show{ display:block; animation: fadeUp .3s both; }
+
+  @keyframes fadeUp{
+    from{ opacity:0; transform:translateY(12px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  /* ============ Мобильная версия ============ */
+  @media (max-width: 760px){
+    .moon{ display:none; }
+    .r3{ width:180px; height:180px; top:-90px; inset-inline-end:-60px; }
+    .shoot{ top:24%; left:76%; width:80px; }
+    .shoot2{ top:14%; left:88%; width:60px; }
+
+    body{ font-size:15px; }
+    .topbar{ height:56px; padding:0 10px; gap:7px; }
+    .brand{ font-size:.88rem; letter-spacing:.06em; gap:7px; }
+    .brand svg{ width:20px; height:20px; }
+    .brand-sub{ display:none; }
+    .lang-switch button{ padding:7px 8px; font-size:.7rem; min-width:32px; }
+    .topbar .btn-sub{ display:none; }
+    .btn-admin{ padding:7px 9px; margin-inline-start:0; }
+    .btn-admin .t{ display:none; }
+
+    .hero{ padding:34px 14px 18px; }
+    .hero h1{ font-size: clamp(1.55rem, 7.5vw, 2.1rem); gap:6px; }
+    .hero-alt{ font-size:.9rem; }
+    .hero-desc{ font-size:.9rem; margin-top:12px; }
+    .search{ padding:10px 12px; font-size:.9rem; }
+
+    .cube-stage{ width:32px; height:32px; }
+    .cube{ width:32px; height:32px; }
+    .cube .f1{ transform: translateZ(16px); }
+    .cube .f2{ transform: rotateY(180deg) translateZ(16px); }
+    .cube .f3{ transform: rotateY(90deg)  translateZ(16px); }
+    .cube .f4{ transform: rotateY(-90deg) translateZ(16px); }
+    .cube .f5{ transform: rotateX(90deg)  translateZ(16px); }
+    .cube .f6{ transform: rotateX(-90deg) translateZ(16px); }
+
+    .cats{ padding:0 14px; gap:7px; }
+    .cat-pill{ padding:7px 12px; font-size:.8rem; }
+    .cat-pill .cnt{ font-size:.66rem; }
+
+    .subs{ padding:0 14px; }
+    .chip{ padding:5px 11px; font-size:.74rem; }
+    .level-cards{ grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap:7px; }
+    .level-card{ padding:9px 10px; }
+    .level-card .lc-title{ font-size:.8rem; }
+    .subjects-block{ margin-top:12px; padding-top:10px; gap:6px; }
+
+    .list-wrap{ margin:26px auto 130px; padding:0 14px; }
+    .list-head h2{ font-size:1.15rem; }
+    .row{ grid-template-columns: minmax(0,1fr); gap:12px; padding:18px 14px; }
+    .row:hover{ transform: translateY(-2px); }
+    .num{ display:none; }
+    .row-top h3{ font-size:1rem; }
+    .tag{ font-size:.62rem; max-width:100%; white-space:normal; }
+    .row-desc{ font-size:.84rem; }
+    .row-meta{ font-size:.84rem; gap:5px 16px; }
+    .row-actions{ flex-direction:row; flex-wrap:wrap; }
+    .row-actions .btn{ flex:1; min-width:100px; padding:8px 10px; font-size:.76rem; }
+    .btn-add{ margin-inline-start:0; width:100%; justify-content:center; }
+
+    .conn{ margin-inline-start:0; width:100%; }
+    .float-logout{ font-size:.8rem; padding:11px 16px; bottom:88px; }
+    .float-sub{ bottom:22px; inset-inline-end:16px; padding:16px 20px; font-size:.9rem; }
+
+    .modal{ padding:22px 18px; max-height:92vh; }
+    .modal-head h3{ font-size:1.1rem; }
+    .overlay{ padding:12px; align-items:center; }
+    .plans{ flex-direction:column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Фоновая сцена -->
+<div class="bg-deco" aria-hidden="true">
+  <div class="moon" id="moon"></div>
+  <div class="ring r1"></div>
+  <div class="ring r2"></div>
+  <div class="ring r3"></div>
+  <span class="spark s1"></span><span class="spark s2"></span><span class="spark s3"></span>
+  <span class="spark s4"></span><span class="spark s5"></span><span class="spark s6"></span>
+  <span class="tw tw1"></span><span class="tw tw2"></span><span class="tw tw3"></span>
+  <div class="shoot"></div><div class="shoot shoot2"></div>
+</div>
+
+<header class="topbar">
+  <a class="brand" href="#">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+      <path d="M12 1.5 21.5 7v10L12 22.5 2.5 17V7L12 1.5z" stroke="#AF7F42" stroke-width="1.7"/>
+      <path d="M12 6.6 16.9 9.4v5.4L12 17.7 7.1 14.8V9.4L12 6.6z" fill="#AF7F42"/>
+    </svg>
+    RAKKA HUB<span class="brand-sub">الرقّة</span>
+  </a>
+  <div class="lang-switch" role="group" aria-label="Language">
+    <button id="langRu" type="button">RU</button>
+    <button id="langAr" class="on" type="button">ع</button>
+    <button id="langEn" type="button">EN</button>
+  </div>
+  <button class="btn-sub" id="subBtn" type="button">
+    <span class="ic"></span><span class="t" data-i18n="subBtn"></span>
+  </button>
+  <button class="btn-admin" id="adminBtn" type="button">
+    <span class="ic"></span><span class="t" data-i18n="adminBtn"></span>
+  </button>
+</header>
+
+<section class="hero reveal">
+  <div class="hero-meta">35.95° N · 39.02° E</div>
+  <h1>
+    <span data-i18n-html="heroTitle"></span>
+    <span class="cube-stage" aria-hidden="true">
+      <span class="cube">
+        <span class="face f1"></span><span class="face f2"></span>
+        <span class="face f3"></span><span class="face f4"></span>
+        <span class="face f5"></span><span class="face f6"></span>
+      </span>
+    </span>
+  </h1>
+  <div class="hero-alt" id="heroAlt"></div>
+  <p class="hero-desc" data-i18n="heroDesc"></p>
+  <div class="search" id="searchBox">
+    <span id="searchIcon"></span>
+    <input id="searchInput" type="search" inputmode="search" data-i18n-ph="searchPh">
+  </div>
+</section>
+
+<nav class="cats reveal" id="cats" aria-label="Категории"></nav>
+<div class="subs reveal" id="subs"></div>
+
+<main class="list-wrap reveal" id="listWrap">
+  <div class="list-head">
+    <h2 id="listTitle"></h2>
+    <span class="cnt" id="listCount"></span>
+    <span class="conn" id="connState"><span class="dot"></span><span id="connText"></span></span>
+  </div>
+  <div class="sheet">
+    <div id="list"></div>
+    <div id="empty" class="empty" hidden>
+      <div id="emptyIcon"></div>
+      <h4 data-i18n="emptyTitle"></h4>
+      <p data-i18n="emptyDesc"></p>
+    </div>
+  </div>
+</main>
+
+<footer class="reveal">
+  <div data-i18n="footer"></div>
+  <a class="footer-phone" href="tel:+963994461602">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.13.96.36 1.9.7 2.8a2 2 0 0 1-.45 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.45c.9.34 1.84.57 2.8.7A2 2 0 0 1 22 16.9z"/></svg>
+    +963 994 461 602
+  </a>
+</footer>
+
+<button class="float-logout" id="floatLogout" type="button">
+  <span id="logoutIcon"></span><span data-i18n="logoutFloat"></span>
+</button>
+
+<button class="float-sub" id="subFab" type="button">
+  <span id="subFabIcon"></span><span data-i18n="subBtn"></span>
+</button>
+
+<div id="toastWrap"></div>
+
+<!-- Детальная карточка -->
+<div class="overlay" id="detailOverlay" role="dialog" aria-modal="true">
+  <div class="modal" id="detailBody"></div>
+</div>
+
+<!-- Модальное окно: подписка -->
+<div class="overlay" id="subOverlay" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 data-i18n="subTitle"></h3>
+      <button class="modal-close" type="button" data-close="subOverlay" aria-label="Close"></button>
+    </div>
+    <p class="modal-desc" data-i18n="subDesc"></p>
+    <div class="plans">
+      <button type="button" class="plan" data-plan="m1" style="animation-delay:0ms">
+        <span class="plan-name" data-i18n="subM1"></span>
+        <span class="plan-price" dir="ltr">$2.50</span>
+        <span class="plan-note" data-i18n="subPer1"></span>
+      </button>
+      <button type="button" class="plan" data-plan="m3" style="animation-delay:80ms">
+        <span class="plan-name" data-i18n="subM3"></span>
+        <span class="plan-price" dir="ltr">$7.00</span>
+        <span class="plan-note" data-i18n="subPer3"></span>
+      </button>
+      <button type="button" class="plan" data-plan="y1" style="animation-delay:160ms">
+        <span class="plan-name" data-i18n="subY1"></span>
+        <span class="plan-price" dir="ltr">$15.00</span>
+        <span class="plan-note" data-i18n="subPer12"></span>
+      </button>
+    </div>
+    <button class="btn btn-solid modal-submit" type="button" id="subPayBtn" data-i18n="subPay"></button>
+    <div class="sub-contact">
+      <span id="subContactName"></span>
+      <span class="ltr-num" dir="ltr">+963 994 461 602</span>
+    </div>
+    <div class="sub-hint" data-i18n="subHint"></div>
+  </div>
+</div>
+
+<!-- Модальное окно: вход администратора -->
+<div class="overlay" id="loginOverlay" role="dialog" aria-modal="true">
+  <form class="modal" id="loginForm" novalidate>
+    <div class="modal-head">
+      <h3 data-i18n="loginTitle"></h3>
+      <button class="modal-close" type="button" data-close="loginOverlay" aria-label="Close"></button>
+    </div>
+    <p class="modal-desc" data-i18n="loginDesc"></p>
+    <div class="err-banner" id="loginErr" role="alert"></div>
+    <div class="field">
+      <label for="emailInput" data-i18n="email"></label>
+      <input type="email" id="emailInput" autocomplete="username"
+             autocapitalize="none" autocorrect="off" spellcheck="false"
+             inputmode="email" enterkeyhint="next">
+    </div>
+    <div class="field">
+      <label for="passInput" data-i18n="password"></label>
+      <input type="password" id="passInput" autocomplete="current-password" enterkeyhint="go">
+    </div>
+    <button class="btn btn-solid modal-submit" type="button" id="loginSubmitBtn" data-i18n="login"></button>
+  </form>
+</div>
+
+<!-- Модальное окно: добавление карточки -->
+<div class="overlay" id="addOverlay" role="dialog" aria-modal="true">
+  <form class="modal" id="addForm" novalidate>
+    <div class="modal-head">
+      <h3 data-i18n="addTitle"></h3>
+      <button class="modal-close" type="button" data-close="addOverlay" aria-label="Close"></button>
+    </div>
+    <div class="err-banner" id="addErr" role="alert"></div>
+    <div class="field">
+      <label data-i18n="fCategory"></label>
+      <select id="fCat"></select>
+    </div>
+    <div class="field" id="fLevelField" hidden>
+      <label data-i18n="level"></label>
+      <select id="fLevel"></select>
+    </div>
+    <div class="field">
+      <label data-i18n="fSub"></label>
+      <select id="fSub"></select>
+    </div>
+    <div class="field">
+      <label data-i18n="expLabel"></label>
+      <select id="fExp">
+        <option value="10000" data-i18n="exp10s"></option>
+        <option value="2592000000" selected data-i18n="exp1m"></option>
+        <option value="7776000000" data-i18n="exp3m"></option>
+        <option value="31536000000" data-i18n="exp12m"></option>
+      </select>
+    </div>
+    <div class="field">
+      <label data-i18n="fTitle"></label>
+      <input type="text" id="fTitle" autocapitalize="words">
+    </div>
+    <div class="field">
+      <label data-i18n="fPhone"></label>
+      <input type="tel" id="fPhone" inputmode="tel" placeholder="+963 9XX XXX XXX">
+    </div>
+    <div class="field">
+      <label id="fLocLabel" data-i18n="fLocation"></label>
+      <input type="text" id="fLoc">
+    </div>
+    <div class="field" id="fCarField" hidden>
+      <label id="fCarLabel" data-i18n="carMake"></label>
+      <input type="text" id="fCar" maxlength="60">
+    </div>
+    <div class="field">
+      <label data-i18n="fDesc"></label>
+      <textarea id="fDesc" maxlength="600"></textarea>
+      <div class="counter" id="descCounter">0 / 600</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" type="button" data-close="addOverlay" data-i18n="cancel"></button>
+      <button class="btn btn-solid" type="submit" data-i18n="save"></button>
+    </div>
+  </form>
+</div>
+
+<!-- Модальное окно: подтверждение удаления -->
+<div class="overlay" id="confirmOverlay" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 data-i18n="confirmTitle"></h3>
+      <button class="modal-close" type="button" data-close="confirmOverlay" aria-label="Close"></button>
+    </div>
+    <p class="modal-desc" id="confirmText"></p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" type="button" data-close="confirmOverlay" data-i18n="cancel"></button>
+      <button class="btn btn-danger" type="button" id="confirmDeleteBtn" data-i18n="delete"></button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  /* RAKKA HUB · build: MOON-v14 — месяц через CSS-маску, мерцание/падающие звёзды,
+     арабские термины исправлены, новые подкатегории. */
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, initializeFirestore,
+    persistentLocalCache, persistentMultipleTabManager,
+    collection, getDocs, addDoc, deleteDoc, doc,
+    onSnapshot, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import {
+    getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCJCF1uxnbgcq5oW-YFM2Pj5hpu_ECewJs",
+    authDomain: "raqqa-hub-beta.firebaseapp.com",
+    projectId: "raqqa-hub-beta",
+    storageBucket: "raqqa-hub-beta.firebasestorage.app",
+    messagingSenderId: "125013317788",
+    appId: "1:125013317788:web:b38fa7be13aa00de1cf559",
+    measurementId: "G-7YWJRYH68R"
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  let db;
+  try {
+    db = initializeFirestore(app, {
+      localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+      experimentalForceLongPolling: true
+    });
+  } catch (e) {
+    console.warn("Persistent cache недоступен, обычный Firestore:", e);
+    db = getFirestore(app);
+  }
+
+  const WA_SUPPORT = "+963 994 461 602";
+
+  /* Локация обязательна: магазины, аптеки, отели, рестораны, кафе, ремонт машин */
+  const LOC_REQUIRED_SUBS = ["hotels", "restaurants", "cafes", "car_repair"];
+  const needsLocation = (cat, subcat) =>
+    cat.base === "stores" || cat.base === "pharmacies" || LOC_REQUIRED_SUBS.includes(subcat);
+
+  /* ============ Глобальные ловушки ============ */
+  window.addEventListener("error", e => {
+    toast("⚠ " + (e.message || "خطأ في السكربت"), "err");
+  });
+  window.addEventListener("unhandledrejection", e => {
+    const r = e.reason;
+    const msg = (r && (r.code || r.message)) ? String(r.code || r.message) : "خطأ في الشبكة";
+    toast("⚠ " + msg, "err");
+  });
+
+  /* ============ Безопасный localStorage ============ */
+  const store = {
+    get(k){ try { return localStorage.getItem(k); } catch { return null; } },
+    set(k, v){ try { localStorage.setItem(k, v); } catch {} }
+  };
+
+  /* ============ Телефон: изоляция направления ============ */
+  const phoneHTML = (s) => `<span dir="ltr">\u2066${esc(s)}\u2069</span>`;
+
+  /* ================= Словарь (RU / AR / EN) ================= */
+  const I18N = {
+    ru: {
+      adminBtn: "Панель администратора",
+      subBtn: "Подписаться",
+      heroTitle: "Справочник города <em>Ракка</em>",
+      heroTag: "دليلك في الرقة",
+      heroDesc: "Врачи, учителя, архитекторы, аптеки, магазины и услуги города — в одном живом реестре. Все контакты проверяются сообществом.",
+      searchPh: "Поиск: имя, телефон, описание…",
+      found: "Найдено",
+      all: "Все",
+      chooseLevel: "Выберите уровень",
+      subjectsWord: "Предметы",
+      connOnline: "Онлайн · обновляется сам",
+      connCache: "Офлайн · показаны сохранённые данные",
+      emptyTitle: "Здесь пока пусто",
+      emptyDesc: "В этом разделе ещё нет записей. Загляните позже или выберите другую специализацию.",
+      loginTitle: "Вход для администратора",
+      loginDesc: "Введите данные аккаунта для управления справочником.",
+      email: "Эл. почта",
+      password: "Пароль",
+      login: "Войти",
+      loginBusy: "Проверяем…",
+      loginError: "Неверный email или пароль",
+      logoutFloat: "Выйти из режима админа",
+      addCard: "Добавить карточку",
+      addTitle: "Новая запись",
+      fCategory: "Раздел",
+      level: "Уровень / класс",
+      fSub: "Специализация",
+      expLabel: "Срок автоудаления",
+      exp10s: "10 секунд (тест)",
+      exp1m: "1 месяц",
+      exp3m: "3 месяца",
+      exp12m: "12 месяцев",
+      fTitle: "Название",
+      fTitleStore: "Название магазина",
+      fTitleVenue: "Название (отель, кафе, ресторан…)",
+      fTitlePerson: "Фамилия Имя Отчество",
+      fPhone: "Телефон / WhatsApp",
+      fLocation: "Локация",
+      carMake: "Марка машины",
+      fDesc: "Описание",
+      save: "Сохранить",
+      cancel: "Отмена",
+      delete: "Удалить",
+      confirmTitle: "Удалить карточку?",
+      confirmDesc: "«{title}» будет удалена безвозвратно.",
+      fillRequired: "Заполните обязательные поля",
+      locRequired: "Для магазина, аптеки, отеля, ресторана, кафе или ремонта машин локация обязательна",
+      carMakeRequired: "Для перевозок укажите марку машины (до 60 символов)",
+      descLimit: "Описание не может превышать 600 символов",
+      toastAdded: "Карточка добавлена",
+      toastDeleted: "Карточка удалена",
+      toastLoggedOut: "Вы вышли из режима админа",
+      toastWelcome: "Режим администратора включён",
+      loadError: "Не удалось загрузить данные из Firestore",
+      call: "Позвонить",
+      back: "Назад",
+      subTitle: "Размещение в «دليلك في الرقة»",
+      subDesc: "Заполните анкету — и ваша карточка появится в справочнике. Стоимость размещения указана ниже.",
+      subM1: "1 месяц",
+      subM3: "3 месяца",
+      subY1: "1 год",
+      subPer1: "в месяц",
+      subPer3: "в 3 месяца",
+      subPer12: "в год",
+      subPay: "Отправить анкету в WhatsApp",
+      subHint: "Оплата переводом. Анкета публикуется после подтверждения.",
+      subSelectPlan: "Сначала выберите срок размещения",
+      subWaMsg: "Здравствуйте! Хочу разместить карточку в «دليلك في الرقة».",
+      subContact: "Ответственный за приём анкет: عمّار المصطفى الحسن",
+      footer: "RAKKA HUB — народный справочник города Ракка. Данные хранятся в Firestore."
+    },
+    ar: {
+      adminBtn: "لوحة المشرف",
+      subBtn: "اشترك",
+      heroTitle: "دليل مدينة <em>الرقّة</em>",
+      heroTag: "RAKKA HUB · دليلك في الرقة",
+      heroDesc: "الأطباء والمدرّسون والمهندسون والصيدليات والمتاجر والخدمات في مدينة واحدة. جميع الأرقام يتحقق منها المجتمع المحلي.",
+      searchPh: "ابحث: الاسم، الهاتف، الوصف…",
+      found: "النتائج",
+      all: "الجميع",
+      chooseLevel: "اختر المرحلة",
+      subjectsWord: "المواد",
+      connOnline: "متصل · تحديث تلقائي",
+      connCache: "دون اتصال · بيانات محفوظة",
+      emptyTitle: "لا توجد بطاقات بعد",
+      emptyDesc: "هذا القسم فارغ حالياً. عُد لاحقاً أو اختر تخصصاً آخر.",
+      loginTitle: "دخول المشرف",
+      loginDesc: "أدخل بيانات حسابك لإدارة الدليل.",
+      email: "البريد الإلكتروني",
+      password: "كلمة المرور",
+      login: "دخول",
+      loginBusy: "جارٍ التحقق…",
+      loginError: "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+      logoutFloat: "الخروج من وضع المشرف",
+      addCard: "إضافة بطاقة",
+      addTitle: "بطاقة جديدة",
+      fCategory: "القسم",
+      level: "المرحلة / الصف",
+      fSub: "التخصص",
+      expLabel: "مدة الحذف التلقائي",
+      exp10s: "10 ثوانٍ (تجربة)",
+      exp1m: "شهر واحد",
+      exp3m: "3 أشهر",
+      exp12m: "12 شهراً",
+      fTitle: "الاسم",
+      fTitleStore: "اسم المتجر",
+      fTitleVenue: "الاسم (فندق، مقهى، مطعم…)",
+      fTitlePerson: "الاسم الكامل",
+      fPhone: "الهاتف / واتساب",
+      fLocation: "الموقع",
+      carMake: "ماركة السيارة",
+      fDesc: "الوصف",
+      save: "حفظ",
+      cancel: "إلغاء",
+      delete: "حذف",
+      confirmTitle: "حذف البطاقة؟",
+      confirmDesc: "سيتم حذف «{title}» نهائياً.",
+      fillRequired: "يرجى تعبئة الحقول المطلوبة",
+      locRequired: "الموقع إلزامي للمتاجر والصيدليات والفنادق والمطاعم والمقاهي وتصليح السيارات",
+      carMakeRequired: "للنقل بين المدن حدد ماركة السيارة (حتى 60 حرفاً)",
+      descLimit: "الوصف لا يمكن أن يتجاوز 600 حرف",
+      toastAdded: "تمت إضافة البطاقة",
+      toastDeleted: "تم حذف البطاقة",
+      toastLoggedOut: "تم الخروج من وضع المشرف",
+      toastWelcome: "تم تفعيل وضع المشرف",
+      loadError: "تعذّر تحميل البيانات من Firestore",
+      call: "اتصال",
+      back: "رجوع",
+      subTitle: "الإدراج في «دليلك في الرقة»",
+      subDesc: "املأ الطلب وستظهر بطاقتك في الدليل. تكلفة الإدراج موضحة أدناه.",
+      subM1: "شهر واحد",
+      subM3: "3 أشهر",
+      subY1: "سنة كاملة",
+      subPer1: "شهرياً",
+      subPer3: "كل 3 أشهر",
+      subPer12: "سنوياً",
+      subPay: "إرسال الطلب عبر واتساب",
+      subHint: "الدفع بالحوالة. تُنشر البطاقة بعد التأكيد.",
+      subSelectPlan: "اختر مدة الإدراج أولاً",
+      subWaMsg: "مرحباً! أريد إدراج بطاقة في دليلك في الرقة.",
+      subContact: "المسؤول عن استقبال الطلبات: عمّار المصطفى الحسن",
+      footer: "دليلك في الرقة — دليل شعبي لمدينة الرقّة. تُخزَّن البيانات في Firestore."
+    },
+    en: {
+      adminBtn: "Admin panel",
+      subBtn: "Subscribe",
+      heroTitle: "City guide of <em>Raqqa</em>",
+      heroTag: "دليلك في الرقة · RAKKA HUB",
+      heroDesc: "Doctors, teachers, engineers, pharmacies, shops and city services — in one living registry. All contacts are verified by the community.",
+      searchPh: "Search: name, phone, description…",
+      found: "Found",
+      all: "All",
+      chooseLevel: "Choose a level",
+      subjectsWord: "Subjects",
+      connOnline: "Online · live updates",
+      connCache: "Offline · showing saved data",
+      emptyTitle: "Nothing here yet",
+      emptyDesc: "There are no records in this section yet. Come back later or choose another specialty.",
+      loginTitle: "Administrator login",
+      loginDesc: "Enter your account credentials to manage the directory.",
+      email: "Email",
+      password: "Password",
+      login: "Sign in",
+      loginBusy: "Checking…",
+      loginError: "Invalid email or password",
+      logoutFloat: "Exit admin mode",
+      addCard: "Add card",
+      addTitle: "New entry",
+      fCategory: "Section",
+      level: "Level / grade",
+      fSub: "Specialty",
+      expLabel: "Auto-delete after",
+      exp10s: "10 seconds (test)",
+      exp1m: "1 month",
+      exp3m: "3 months",
+      exp12m: "12 months",
+      fTitle: "Name",
+      fTitleStore: "Shop name",
+      fTitleVenue: "Name (hotel, café, restaurant…)",
+      fTitlePerson: "Full name",
+      fPhone: "Phone / WhatsApp",
+      fLocation: "Location",
+      carMake: "Car make",
+      fDesc: "Description",
+      save: "Save",
+      cancel: "Cancel",
+      delete: "Delete",
+      confirmTitle: "Delete this card?",
+      confirmDesc: "“{title}” will be permanently deleted.",
+      fillRequired: "Please fill in the required fields",
+      locRequired: "Location is required for shops, pharmacies, hotels, restaurants, cafés and car repair",
+      carMakeRequired: "For intercity transport specify the car make (up to 60 characters)",
+      descLimit: "Description cannot exceed 600 characters",
+      toastAdded: "Card added",
+      toastDeleted: "Card deleted",
+      toastLoggedOut: "You have exited admin mode",
+      toastWelcome: "Admin mode enabled",
+      loadError: "Failed to load data from Firestore",
+      call: "Call",
+      back: "Back",
+      subTitle: "Listing on Dalilak fi Raqqa",
+      subDesc: "Fill in the application and your card will appear in the directory. Listing prices are below.",
+      subM1: "1 month",
+      subM3: "3 months",
+      subY1: "1 year",
+      subPer1: "per month",
+      subPer3: "per 3 months",
+      subPer12: "per year",
+      subPay: "Send application via WhatsApp",
+      subHint: "Payment by transfer. The card is published after confirmation.",
+      subSelectPlan: "Choose the listing period first",
+      subWaMsg: "Hello! I want to list my card on Dalilak fi Raqqa.",
+      subContact: "Applications manager: Ammar Al-Mustafa Al-Hasan",
+      footer: "Dalilak fi Raqqa — the people's directory of Raqqa. Data stored in Firestore."
+    }
+  };
+
+  /* ============ Ошибки Firebase Auth ============ */
+  const AUTH_ERRORS = {
+    "auth/invalid-email":            { ru:"Некорректный email-адрес",                ar:"البريد الإلكتروني غير صالح",                 en:"Invalid email address" },
+    "auth/user-disabled":            { ru:"Аккаунт отключён",                        ar:"الحساب معطّل",                               en:"Account disabled" },
+    "auth/user-not-found":           { ru:"Пользователь с таким email не найден",    ar:"لا يوجد حساب بهذا البريد",                  en:"No account found with this email" },
+    "auth/wrong-password":           { ru:"Неверный пароль",                         ar:"كلمة المرور غير صحيحة",                     en:"Wrong password" },
+    "auth/invalid-credential":       { ru:"Неверный email или пароль",               ar:"البريد أو كلمة المرور غير صحيحة",           en:"Invalid email or password" },
+    "auth/invalid-login-credentials":{ ru:"Неверный email или пароль",               ar:"البريد أو كلمة المرور غير صحيحة",           en:"Invalid email or password" },
+    "auth/too-many-requests":        { ru:"Слишком много попыток. Попробуйте позже", ar:"محاولات كثيرة، حاول لاحقاً",                 en:"Too many attempts. Try later" },
+    "auth/network-request-failed":   { ru:"Нет соединения с сервером Google",        ar:"لا يوجد اتصال بخوادم جوجل",                 en:"No connection to Google servers" },
+    "auth/operation-not-allowed":    { ru:"Вход Email/Password не включён в Firebase Console", ar:"تسجيل الدخول بالبريد غير مفعّل في Firebase", en:"Email/Password sign-in is not enabled in Firebase Console" },
+    "auth/unauthorized-domain":      { ru:"Домен не разрешён: Firebase → Authentication → Settings → Authorized domains", ar:"النطاق غير مسموح في إعدادات Firebase", en:"Domain not authorized: Firebase → Authentication → Settings → Authorized domains" },
+    "auth/internal-error":           { ru:"Внутренняя ошибка. Попробуйте снова",     ar:"خطأ داخلي، حاول مجدداً",                     en:"Internal error. Try again" },
+    "auth/missing-password":         { ru:"Введите пароль",                          ar:"أدخل كلمة المرور",                          en:"Enter the password" },
+    "app/timeout":                   { ru:"Сервер не отвечает (15 сек). Проверьте интернет", ar:"الخادم لا يستجيب، تحقق من الإنترنت",  en:"Server not responding (15s). Check your internet" }
+  };
+  function authErrText(code) {
+    const m = AUTH_ERRORS[code];
+    if (m && m[state.lang]) return m[state.lang];
+    if (code) return code;
+    return t("loginError");
+  }
+
+  /* ================= Категории ================= */
+  const CATS = [
+    { id: "doctors", base: "doctors", cardMode: true,
+      ru: "Доктора", ar: "الأطباء", en: "Doctors", subs: [
+      { id:"surgeon", ru:"Хирург", ar:"جرّاح", en:"Surgeon" },
+      { id:"dermatologist", ru:"Дерматолог", ar:"طبيب جلدية", en:"Dermatologist" },
+      { id:"general", ru:"Общий", ar:"طبيب عام", en:"General practitioner" },
+      { id:"pediatrician", ru:"Педиатр", ar:"طبيب أطفال", en:"Pediatrician" },
+      { id:"therapist", ru:"Терапевт", ar:"أخصائي علاج", en:"Therapist" },
+      { id:"cardiologist", ru:"Кардиолог", ar:"طبيب قلب", en:"Cardiologist" },
+      { id:"neurologist", ru:"Невролог", ar:"طبيب أعصاب", en:"Neurologist" },
+      { id:"dentist", ru:"Стоматолог", ar:"طبيب أسنان", en:"Dentist" },
+      { id:"ophthalmologist", ru:"Офтальмолог", ar:"طبيب عيون", en:"Ophthalmologist" },
+      { id:"ent", ru:"ЛОР", ar:"أنف وأذن وحنجرة", en:"ENT" },
+      { id:"orthopedist", ru:"Ортопед", ar:"طبيب عظام", en:"Orthopedist" },
+      { id:"urologist", ru:"Уролог", ar:"طبيب مسالك", en:"Urologist" }
+    ]},
+    { id: "teachers", base: "teachers",
+      ru: "Учителя", ar: "مدرّسون", en: "Teachers", levels: [
+      { id: "teachers_9", ru: "9 класс", ar: "الصف التاسع", en: "9th grade", subs: [
+        { id:"math_9", ru:"Математика", ar:"الرياضيات", en:"Mathematics" },
+        { id:"science_9", ru:"Естествознание", ar:"علوم", en:"Science" },
+        { id:"religious_9", ru:"Религиозное образование", ar:"التربية الدينية", en:"Religious education" },
+        { id:"english_9", ru:"Английский", ar:"الإنجليزية", en:"English" },
+        { id:"russian_9", ru:"Русский", ar:"الروسية", en:"Russian" },
+        { id:"french_9", ru:"Французский", ar:"الفرنسية", en:"French" },
+        { id:"history_9", ru:"История", ar:"التاريخ", en:"History" },
+        { id:"geography_9", ru:"География", ar:"الجغرافيا", en:"Geography" },
+        { id:"arabic_9", ru:"Арабский", ar:"العربية", en:"Arabic" }
+      ]},
+      { id: "teachers_bs", ru: "Бакалавриат · научный", ar: "بكالوريا - علمي", en: "Baccalaureate · science", subs: [
+        { id:"science_bs", ru:"Естествознание", ar:"علوم", en:"Science" },
+        { id:"religious_bs", ru:"Религиозное образование", ar:"التربية الدينية", en:"Religious education" },
+        { id:"math_bs", ru:"Математика", ar:"الرياضيات", en:"Mathematics" },
+        { id:"physics_bs", ru:"Физика", ar:"الفيزياء", en:"Physics" },
+        { id:"chemistry_bs", ru:"Химия", ar:"الكيمياء", en:"Chemistry" },
+        { id:"english_bs", ru:"Английский", ar:"الإنجليزية", en:"English" },
+        { id:"russian_bs", ru:"Русский", ar:"الروسية", en:"Russian" },
+        { id:"french_bs", ru:"Французский", ar:"الفرنسية", en:"French" },
+        { id:"arabic_bs", ru:"Арабский", ar:"العربية", en:"Arabic" }
+      ]},
+      { id: "teachers_bh", ru: "Бакалавриат · гуманитарный", ar: "بكالوريا - أدبي", en: "Baccalaureate · humanities", subs: [
+        { id:"religious_bh", ru:"Религиозное образование", ar:"التربية الدينية", en:"Religious education" },
+        { id:"english_bh", ru:"Английский", ar:"الإنجليزية", en:"English" },
+        { id:"russian_bh", ru:"Русский", ar:"الروسية", en:"Russian" },
+        { id:"french_bh", ru:"Французский", ar:"الفرنسية", en:"French" },
+        { id:"philosophy_bh", ru:"Философия", ar:"الفلسفة", en:"Philosophy" },
+        { id:"history_bh", ru:"История", ar:"التاريخ", en:"History" },
+        { id:"geography_bh", ru:"География", ar:"الجغرافيا", en:"Geography" },
+        { id:"arabic_bh", ru:"Арабский", ar:"العربية", en:"Arabic" }
+      ]}
+    ]},
+    { id: "architects", base: "architects", cardMode: true,
+      ru: "Архитекторы", ar: "مهندسون", en: "Engineers", subs: [
+      { id:"building_arch", ru:"Строительный", ar:"مهندس مدني", en:"Civil engineer" },
+      { id:"agronomist", ru:"Агроном", ar:"مهندس زراعي", en:"Agronomist" },
+      { id:"design_arch", ru:"Дизайн", ar:"مهندس تصميم", en:"Design engineer" },
+      { id:"decor_arch", ru:"Декор", ar:"مهندس ديكور", en:"Decor designer" }
+    ]},
+    { id: "stores", base: "stores", cardMode: true,
+      ru: "Магазины", ar: "متاجر", en: "Stores", subs: [
+      { id:"construction", ru:"Строительный", ar:"مواد بناء", en:"Construction" },
+      { id:"grocery", ru:"Продуктовый", ar:"بقالة", en:"Grocery" },
+      { id:"auto", ru:"Авто", ar:"سيارات", en:"Auto" },
+      { id:"realty", ru:"Недвижимость/Квартиры", ar:"عقارات", en:"Real estate" },
+      { id:"fabric", ru:"Ткани", ar:"أقمشة", en:"Fabrics" },
+      { id:"clothing", ru:"Одежда", ar:"ملابس", en:"Clothing" },
+      { id:"gold", ru:"Магазины золота", ar:"مصاغ الذهب", en:"Gold shops" },
+      { id:"autoparts", ru:"Авто запчасти", ar:"قطع سيارات", en:"Auto parts" },
+      { id:"hookah", ru:"Магазины кальянов", ar:"معارض الأراكيل", en:"Hookah shops" },
+      { id:"electrical", ru:"Электрозапчасти", ar:"قطع غيار كهربائية", en:"Electrical parts" },
+      { id:"solar", ru:"Солнечные панели", ar:"ألواح الطاقة الشمسية", en:"Solar panels" },
+      { id:"exchange", ru:"Обмен валют", ar:"صرافة العملات", en:"Currency exchange" },
+      { id:"appliances", ru:"Электроприборы", ar:"أجهزة كهربائية", en:"Electrical appliances" },
+      { id:"phones", ru:"Магазин телефонов", ar:"متجر هواتف", en:"Phone shop" },
+      { id:"computers", ru:"Магазин ПК и ноутбуков", ar:"متجر كمبيوتر ولابتوب", en:"Computers & laptops shop" }
+    ]},
+    { id: "pharmacies", base: "pharmacies", cardMode: true,
+      ru: "Аптеки", ar: "صيدليات", en: "Pharmacies", subs: [
+      { id:"pharm_people", ru:"Аптека для людей", ar:"صيدلية بشرية", en:"Pharmacy for people" },
+      { id:"pharm_animals", ru:"Аптека для животных", ar:"صيدلية بيطرية", en:"Veterinary pharmacy" },
+      { id:"pharm_plants", ru:"Аптека для растений", ar:"صيدلية زراعية", en:"Plant pharmacy" }
+    ]},
+    { id: "services", base: "services", cardMode: true,
+      ru: "Услуги", ar: "خدمات", en: "Services", subs: [
+      { id:"hotels", ru:"Отели", ar:"فنادق", en:"Hotels" },
+      { id:"restaurants", ru:"Рестораны", ar:"مطاعم", en:"Restaurants" },
+      { id:"cafes", ru:"Кафе", ar:"مقاهي", en:"Cafés" },
+      { id:"transport", ru:"Перевозки меж городов", ar:"نقل بين المدن", en:"Intercity transport" },
+      { id:"car_repair", ru:"Ремонт машин", ar:"تصليح السيارات", en:"Car repair" },
+      { id:"travel", ru:"Туристические агентства", ar:"وكالات السفر", en:"Travel agencies" },
+      { id:"photographers", ru:"Фотографы", ar:"مصوّرون", en:"Photographers" },
+      { id:"events", ru:"Агентства праздников", ar:"وكالات تنظيم الحفلات", en:"Event agencies" },
+      { id:"weddings", ru:"Агентства свадеб", ar:"وكالات تنظيم الأعراس", en:"Wedding agencies" }
+    ]}
+  ];
+
+  const levelsOf = (cat) => cat.levels || [{ id: cat.id, ru: cat.ru, ar: cat.ar, en: cat.en, subs: cat.subs }];
+  const levelIdsOf = (cat) => levelsOf(cat).map(l => l.id);
+
+  /* ================= Иконки ================= */
+  const ICONS = {
+    phone: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.13.96.36 1.9.7 2.8a2 2 0 0 1-.45 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.45c.9.34 1.84.57 2.8.7A2 2 0 0 1 22 16.9z"/>',
+    pin: '<path d="M12 21s-7-6.1-7-11a7 7 0 1 1 14 0c0 4.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/>',
+    x: '<path d="M18 6 6 18M6 6l12 12"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    trash: '<path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+    logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/>',
+    lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+    chat: '<path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5z"/>',
+    inbox: '<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.4 5.4 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.4-6.6A2 2 0 0 0 17 4H7a2 2 0 0 0-1.6 1.4z"/>',
+    arrow: '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
+    back: '<path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>',
+    book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+    crown: '<path d="M3 18h18"/><path d="M4 8l4 4 4-8 4 8 4-4-1 10H5L4 8z"/>',
+    car: '<path d="M5 11l1.7-4.2A2 2 0 0 1 8.6 5.5h6.8a2 2 0 0 1 1.9 1.3L19 11"/><path d="M3 17v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4"/><path d="M3 17h3"/><path d="M18 17h3"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/>'
+  };
+  const icon = (n, s = 16) =>
+    `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[n]}</svg>`;
+
+  /* ================= Состояние ================= */
+  const state = {
+    lang: (() => {
+      const l = store.get("rakka_lang");
+      return ["ru","ar","en"].includes(l) ? l : "ar";
+    })(),
+    cat: "doctors",
+    level: "doctors",
+    sub: "all",
+    search: "",
+    admin: false,
+    docs: [],
+    detailId: null,
+    levelSelected: false
+  };
+  let pendingDeleteId = null;
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c =>
+    ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+  const t = (key, lang = state.lang) => I18N[lang][key] || I18N.ar[key] || I18N.ru[key] || key;
+  const nm = (o) => o[state.lang] || o.ar || o.ru;
+  const catById = (id) => CATS.find(c => c.id === id);
+
+  function subName(groupId, subId) {
+    for (const c of CATS) {
+      for (const l of levelsOf(c)) {
+        if (l.id === groupId) {
+          const s = l.subs.find(x => x.id === subId);
+          if (s) return nm(s);
+          return subId;
+        }
+      }
+    }
+    return subId;
+  }
+  const catName = (c) => nm(c);
+  const levelName = (l) => nm(l);
+
+  function withTimeout(promise, ms = 15000) {
+    return Promise.race([
+      promise,
+      new Promise((_, rej) => setTimeout(() => rej({ code: "app/timeout" }), ms))
+    ]);
+  }
+
+  /* ================= Тосты и плашки ================= */
+  const toastWrap = $("toastWrap");
+  function toast(msg, type = "ok") {
+    const d = document.createElement("div");
+    d.className = "toast" + (type === "err" ? " err" : "");
+    d.textContent = msg;
+    toastWrap.appendChild(d);
+    setTimeout(() => { d.classList.add("out"); setTimeout(() => d.remove(), 350); }, 3000);
+  }
+  function banner(el, key) { bannerMsg(el, t(key)); }
+  function bannerMsg(el, text) {
+    el.textContent = text;
+    el.classList.add("show");
+    clearTimeout(el._tm);
+    el._tm = setTimeout(() => el.classList.remove("show"), 3000);
+  }
+
+  /* ================= Автоудаление (TTL) ================= */
+  const isExpired = (p) => p.expiresAt && Number(p.expiresAt) <= Date.now();
+
+  async function sweepExpired() {
+    const expired = state.docs.filter(isExpired);
+    if (!expired.length) return;
+    if (state.admin) {
+      for (const p of expired) {
+        try { await deleteDoc(doc(db, "providers", p.id)); }
+        catch (e) { console.error("TTL delete:", e && e.code); }
+      }
+    } else {
+      renderList();
+    }
+  }
+  setInterval(sweepExpired, 3000);
+
+  /* ================= Данные ================= */
+  let listening = false;
+
+  function setConn(mode) {
+    const el = $("connState");
+    el.className = "conn " + mode;
+    $("connText").textContent = t(mode === "online" ? "connOnline" : "connCache");
+  }
+
+  function applySnapshot(snap) {
+    state.docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    state.docs.sort((a, b) => {
+      const sa = (a.createdAt && a.createdAt.seconds) || 0;
+      const sb = (b.createdAt && b.createdAt.seconds) || 0;
+      return sb - sa;
+    });
+    renderAll();
+    setConn(snap.metadata.fromCache ? "cache" : "online");
+  }
+
+  function startListener() {
+    try {
+      onSnapshot(collection(db, "providers"),
+        snap => applySnapshot(snap),
+        err => {
+          console.error("Snapshot error:", err);
+          setConn("cache");
+          loadOnce();
+        });
+      listening = true;
+    } catch (e) {
+      console.error(e);
+      loadOnce();
+    }
+  }
+
+  async function loadOnce() {
+    try {
+      const snap = await withTimeout(getDocs(collection(db, "providers")), 15000);
+      applySnapshot(snap);
+    } catch (e) { console.error(e); }
+  }
+
+  async function dbAdd(data) {
+    await withTimeout(
+      addDoc(collection(db, "providers"), { ...data, createdAt: serverTimestamp() }), 20000);
+    if (!listening) await loadOnce();
+  }
+
+  async function dbRemove(id) {
+    await withTimeout(deleteDoc(doc(db, "providers", id)), 20000);
+    if (!listening) await loadOnce();
+  }
+
+  /* ================= Рендер ================= */
+  function renderCats() {
+    const el = $("cats");
+    el.innerHTML = CATS.map(c => {
+      const cnt = state.docs.filter(d => levelIdsOf(c).includes(d.group) && !isExpired(d)).length;
+      return `<button type="button" class="cat-pill${state.cat === c.id ? " on" : ""}" data-cat="${c.id}">
+        ${esc(catName(c))}<span class="cnt">${cnt}</span>
+      </button>`;
+    }).join("");
+  }
+
+  function renderSubs() {
+    const el = $("subs");
+    const cat = catById(state.cat);
+    const lvls = levelsOf(cat);
+    const cur = lvls.find(l => l.id === state.level) || lvls[0];
+    state.level = cur.id;
+
+    if (cat.cardMode) {
+      const cntAll = state.docs.filter(d => d.group === cat.id && !isExpired(d)).length;
+      const card = (id, name, cnt, i, on) => `
+        <button type="button" class="level-card${on ? " on" : ""}" data-subcard="${id}" style="animation-delay:${Math.max(i,0)*70}ms">
+          <span class="lc-top">
+            <span class="lc-title">${esc(name)}</span>
+            <span class="lc-arrow">${icon("arrow", 14)}</span>
+          </span>
+          <span class="lc-cnt">${cnt}</span>
+        </button>`;
+      el.innerHTML = `<div class="level-cards">
+          ${card("all", t("all"), cntAll, -1, state.sub === "all")}
+          ${cat.subs.map((s, i) =>
+            card(s.id, nm(s),
+                 state.docs.filter(d => d.group === cat.id && d.subcategory === s.id && !isExpired(d)).length,
+                 i, state.sub === s.id)).join("")}
+        </div>
+        <div class="subjects-block">
+          <button type="button" id="addCardBtn" class="btn-add${state.admin ? "" : " hidden"}">
+            ${icon("plus", 15)}<span>${esc(t("addCard"))}</span></button>
+        </div>`;
+      return;
+    }
+
+    if (cat.levels) {
+      const levelCard = (l, i, chosenCls) => `
+        <button type="button" class="level-card${chosenCls}" data-level="${l.id}" style="animation-delay:${i*90}ms">
+          <span class="lc-top">
+            <span class="lc-title">${esc(levelName(l))}</span>
+            <span class="lc-arrow">${icon("arrow", 14)}</span>
+          </span>
+          <span class="lc-sub">${esc(t("chooseLevel"))}</span>
+          <span class="lc-cnt">${state.docs.filter(d => d.group === l.id && !isExpired(d)).length}</span>
+        </button>`;
+
+      if (!state.levelSelected) {
+        el.innerHTML = `<div class="level-cards">${lvls.map((l,i) => levelCard(l,i,"")).join("")}</div>`;
+        return;
+      }
+      el.innerHTML = `
+        <div class="level-cards">
+          ${lvls.map((l,i) => levelCard(l,i, l.id === state.level ? " on" : "")).join("")}
+        </div>
+        <div class="subjects-block">
+          <div class="subjects-title">${icon("book", 14)}<span>${esc(t("subjectsWord"))}</span></div>
+          <button type="button" class="chip${state.sub === "all" ? " on" : ""}" data-sub="all">${esc(t("all"))}</button>
+          ${cur.subs.map(s =>
+            `<button type="button" class="chip${state.sub === s.id ? " on" : ""}" data-sub="${s.id}">${esc(nm(s))}</button>`).join("")}
+          <button type="button" id="addCardBtn" class="btn-add${state.admin ? "" : " hidden"}">
+            ${icon("plus", 15)}<span>${esc(t("addCard"))}</span></button>
+        </div>`;
+      return;
+    }
+
+    let html = `<button type="button" class="chip${state.sub === "all" ? " on" : ""}" data-sub="all">${esc(t("all"))}</button>`;
+    html += cur.subs.map(s =>
+      `<button type="button" class="chip${state.sub === s.id ? " on" : ""}" data-sub="${s.id}">${esc(nm(s))}</button>`
+    ).join("");
+    html += `<button type="button" id="addCardBtn" class="btn-add${state.admin ? "" : " hidden"}">
+      ${icon("plus", 15)}<span>${esc(t("addCard"))}</span></button>`;
+    el.innerHTML = html;
+  }
+
+  function filtered() {
+    let items = state.docs.filter(d => d.group === state.level && !isExpired(d));
+    if (state.sub !== "all") items = items.filter(d => d.subcategory === state.sub);
+    if (state.search) {
+      const s = state.search.toLowerCase().replace(/\s/g, "");
+      items = items.filter(d =>
+        (d.title || "").toLowerCase().includes(state.search.toLowerCase()) ||
+        (d.description || "").toLowerCase().includes(state.search.toLowerCase()) ||
+        (d.phone || "").replace(/\s/g, "").includes(s) ||
+        (d.carMake || "").toLowerCase().includes(state.search.toLowerCase())
+      );
+    }
+    return items;
+  }
+
+  function renderList() {
+    const cat = catById(state.cat);
+    const lvls = levelsOf(cat);
+    const cur = lvls.find(l => l.id === state.level) || lvls[0];
+    let title = catName(cat);
+    if (cat.levels && state.levelSelected) title += " · " + levelName(cur);
+    if (state.sub !== "all") title += " · " + subName(state.level, state.sub);
+
+    const items = filtered();
+    $("listTitle").textContent = title;
+    $("listCount").textContent = `${t("found")}: ${items.length}`;
+
+    const listEl = $("list");
+    listEl.innerHTML = items.map((p, i) => {
+      const tel = (p.phone || "").replace(/[^\d+]/g, "");
+      const wa = tel.replace(/\D/g, "");
+      return `
+      <article class="row" data-id="${esc(p.id)}" style="animation-delay:${Math.min(i * 45, 400)}ms">
+        <div class="num">${String(i + 1).padStart(2, "0")}</div>
+        <div class="row-body">
+          <div class="row-top">
+            <h3>${esc(p.title)}</h3>
+            <span class="tag">${esc(subName(p.group, p.subcategory))}</span>
+          </div>
+          ${p.description ? `<p class="row-desc">${esc(p.description)}</p>` : ""}
+          <div class="row-meta">
+            ${p.phone ? `<span class="ltr-num">${icon("phone", 15)}${phoneHTML(p.phone)}</span>` : ""}
+            ${p.location ? `<span class="loc">${icon("pin", 15)}${esc(p.location)}</span>` : ""}
+            ${p.carMake ? `<span class="loc">${icon("car", 15)}${esc(p.carMake)}</span>` : ""}
+          </div>
+        </div>
+        <div class="row-actions">
+          ${tel ? `<a class="btn btn-solid" href="tel:${esc(tel)}">${icon("phone", 14)}${esc(t("call"))}</a>` : ""}
+          ${wa ? `<a class="btn btn-outline" href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener">${icon("chat", 14)}WhatsApp</a>` : ""}
+          ${state.admin ? `<button type="button" class="btn btn-danger row-del" data-id="${esc(p.id)}">${icon("trash", 14)}${esc(t("delete"))}</button>` : ""}
+        </div>
+      </article>`;
+    }).join("");
+    $("empty").hidden = items.length > 0;
+    $("emptyIcon").innerHTML = icon("inbox", 42);
+  }
+
+  function renderAll() { renderCats(); renderSubs(); renderList(); }
+
+  function applyLang() {
+    const L = state.lang;
+    document.documentElement.lang = L;
+    document.documentElement.dir = (L === "ar") ? "rtl" : "ltr";
+    $("langRu").classList.toggle("on", L === "ru");
+    $("langAr").classList.toggle("on", L === "ar");
+    $("langEn").classList.toggle("on", L === "en");
+    document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t(el.dataset.i18n));
+    document.querySelectorAll("[data-i18n-ph]").forEach(el => el.placeholder = t(el.dataset.i18nPh));
+    document.querySelectorAll("[data-i18n-html]").forEach(el => el.innerHTML = t(el.dataset.i18nHtml));
+    $("heroAlt").textContent = t("heroTag");
+    const sc = document.getElementById("subContactName");
+    if (sc) sc.textContent = t("subContact");
+    setConn($("connState").classList.contains("cache") ? "cache" : "online");
+    renderAll();
+    if (state.detailId && $("detailOverlay").classList.contains("show")) renderDetail(state.detailId);
+  }
+
+  /* ================= Детальная карточка ================= */
+  function detailHTML(p) {
+    const tel = (p.phone || "").replace(/[^\d+]/g, "");
+    const wa = tel.replace(/\D/g, "");
+
+    return `
+      <button type="button" class="modal-back" data-close="detailOverlay">${icon("back", 15)}<span>${esc(t("back"))}</span></button>
+      <div class="modal-head">
+        <h3>${esc(p.title)}</h3>
+      </div>
+      <span class="tag detail-tag">${esc(subName(p.group, p.subcategory))}</span>
+      ${p.description ? `<p class="detail-desc">${esc(p.description)}</p>` : ""}
+      <div class="detail-meta">
+        ${p.phone ? `<span class="ltr-num">${icon("phone", 16)}${phoneHTML(p.phone)}</span>` : ""}
+        ${p.location ? `<span>${icon("pin", 16)}${esc(p.location)}</span>` : ""}
+        ${p.carMake ? `<span>${icon("car", 16)}${esc(p.carMake)}</span>` : ""}
+      </div>
+      <div class="detail-actions">
+        ${tel ? `<a class="btn btn-solid" href="tel:${esc(tel)}">${icon("phone", 14)}${esc(t("call"))}</a>` : ""}
+        ${wa ? `<a class="btn btn-outline" href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener">${icon("chat", 14)}WhatsApp</a>` : ""}
+        ${state.admin ? `<button type="button" class="btn btn-danger detail-del" data-id="${esc(p.id)}">${icon("trash", 14)}${esc(t("delete"))}</button>` : ""}
+      </div>`;
+  }
+
+  function bindDetail(p) {
+    const body = $("detailBody");
+
+    const del = body.querySelector(".detail-del");
+    if (del) del.addEventListener("click", () => {
+      pendingDeleteId = del.dataset.id;
+      const doc0 = state.docs.find(d => d.id === pendingDeleteId);
+      $("confirmText").textContent = t("confirmDesc").replace("{title}", doc0 ? doc0.title : "");
+      openOv("confirmOverlay");
+    });
+
+    const back = body.querySelector("[data-close='detailOverlay']");
+    if (back) back.addEventListener("click", () => closeOv("detailOverlay"));
+  }
+
+  function renderDetail(id) {
+    const p = state.docs.find(d => d.id === id && !isExpired(d));
+    if (!p) { closeOv("detailOverlay"); state.detailId = null; return; }
+    const wasOpen = $("detailOverlay").classList.contains("show");
+    $("detailBody").innerHTML = detailHTML(p);
+    bindDetail(p);
+    if (!wasOpen) openOv("detailOverlay");
+  }
+
+  function openDetail(id) {
+    state.detailId = id;
+    renderDetail(id);
+  }
+
+  /* ================= Модальные окна ================= */
+  const openOv = (id) => $(id).classList.add("show");
+  const closeOv = (id) => $(id).classList.remove("show");
+  document.querySelectorAll("[data-close]").forEach(b =>
+    b.addEventListener("click", () => closeOv(b.dataset.close)));
+  ["loginOverlay", "addOverlay", "confirmOverlay", "detailOverlay", "subOverlay"].forEach(id => {
+    $(id).addEventListener("click", e => { if (e.target === $(id)) closeOv(id); });
+  });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") {
+      ["loginOverlay", "addOverlay", "confirmOverlay", "detailOverlay", "subOverlay"].forEach(id => closeOv(id));
+      state.detailId = null;
+    }
+  });
+
+  /* ================= Подписка ================= */
+  let selectedPlan = null;
+  function openSubModal() {
+    selectedPlan = null;
+    document.querySelectorAll("#subOverlay .plan").forEach(x => x.classList.remove("on"));
+    openOv("subOverlay");
+  }
+  $("subBtn").addEventListener("click", openSubModal);
+  $("subFab").addEventListener("click", openSubModal);
+  document.querySelectorAll("#subOverlay .plan").forEach(b => {
+    b.addEventListener("click", () => {
+      selectedPlan = b.dataset.plan;
+      document.querySelectorAll("#subOverlay .plan").forEach(x => x.classList.toggle("on", x === b));
+    });
+  });
+  $("subPayBtn").addEventListener("click", () => {
+    if (!selectedPlan) { toast(t("subSelectPlan")); return; }
+    const planName = t(selectedPlan === "m1" ? "subM1" : selectedPlan === "m3" ? "subM3" : "subY1");
+    const price = selectedPlan === "m1" ? "$2.50" : selectedPlan === "m3" ? "$7.00" : "$15.00";
+    const msg = encodeURIComponent(
+      `${t("subWaMsg")}\n${planName} — ${price}`
+    );
+    const waNum = WA_SUPPORT.replace(/\D/g, "");
+    window.open(`https://wa.me/${waNum}?text=${msg}`, "_blank", "noopener");
+  });
+  $("subBtn").querySelector(".ic").innerHTML = icon("crown", 15);
+  $("subFabIcon").innerHTML = icon("crown", 17);
+
+  /* ================= Клик по карточке = открытие ================= */
+  $("list").addEventListener("click", e => {
+    if (e.target.closest("a, button")) return;
+    const row = e.target.closest(".row");
+    if (row) openDetail(row.dataset.id);
+  });
+
+  /* ================= Авторизация ================= */
+  function syncAdminUI() {
+    $("adminBtn").style.display = state.admin ? "none" : "";
+    $("floatLogout").classList.toggle("show", state.admin);
+    renderSubs();
+    renderList();
+  }
+
+  onAuthStateChanged(auth, user => {
+    state.admin = !!user;
+    syncAdminUI();
+    sweepExpired();
+  });
+
+  $("adminBtn").addEventListener("click", () => {
+    $("loginErr").classList.remove("show");
+    $("loginForm").reset();
+    openOv("loginOverlay");
+    setTimeout(() => { try { $("emailInput").focus(); } catch {} }, 350);
+  });
+
+  let loginBusy = false;
+  async function doLogin() {
+    if (loginBusy) return;
+    const em = $("emailInput").value.trim();
+    const pw = $("passInput").value.trim();
+    if (!em || !pw) { banner($("loginErr"), "fillRequired"); return; }
+
+    const btn = $("loginSubmitBtn");
+    loginBusy = true;
+    btn.disabled = true;
+    btn.textContent = t("loginBusy");
+
+    try {
+      await withTimeout(signInWithEmailAndPassword(auth, em, pw), 15000);
+      state.admin = true;
+      syncAdminUI();
+      closeOv("loginOverlay");
+      toast(t("toastWelcome"));
+    } catch (err) {
+      console.error("Auth error:", err && err.code, err && err.message);
+      bannerMsg($("loginErr"), authErrText(err && err.code));
+    } finally {
+      loginBusy = false;
+      btn.disabled = false;
+      btn.textContent = t("login");
+    }
+  }
+
+  $("loginSubmitBtn").addEventListener("click", doLogin);
+  $("loginForm").addEventListener("submit", e => { e.preventDefault(); doLogin(); });
+  $("passInput").addEventListener("keydown", e => {
+    if (e.key === "Enter") { e.preventDefault(); doLogin(); }
+  });
+  $("emailInput").addEventListener("keydown", e => {
+    if (e.key === "Enter") { e.preventDefault(); $("passInput").focus(); }
+  });
+
+  $("floatLogout").addEventListener("click", async () => {
+    try { await signOut(auth); toast(t("toastLoggedOut")); }
+    catch (e) { console.error(e); }
+  });
+
+  /* ================= Форма добавления карточки ================= */
+  function fillCatSelect() {
+    $("fCat").innerHTML = CATS.map(c =>
+      `<option value="${c.id}"${state.cat === c.id ? " selected" : ""}>${esc(catName(c))}</option>`).join("");
+    syncLevelSelect();
+  }
+  function syncLevelSelect() {
+    const cat = catById($("fCat").value);
+    if (cat.levels) {
+      $("fLevelField").hidden = false;
+      $("fLevel").innerHTML = cat.levels.map(l =>
+        `<option value="${l.id}"${state.level === l.id ? " selected" : ""}>${esc(levelName(l))}</option>`).join("");
+    } else {
+      $("fLevelField").hidden = true;
+      $("fLevel").innerHTML = "";
+    }
+    fillSubSelect();
+  }
+  function fillSubSelect() {
+    const cat = catById($("fCat").value);
+    const lv = cat.levels
+      ? (cat.levels.find(l => l.id === $("fLevel").value) || cat.levels[0])
+      : levelsOf(cat)[0];
+    $("fSub").innerHTML = lv.subs.map(s =>
+      `<option value="${s.id}">${esc(nm(s))}</option>`).join("");
+    updateLocLabel();
+  }
+  function updateLocLabel() {
+    const cat = catById($("fCat").value);
+    const subcat = $("fSub").value;
+    const must = needsLocation(cat, subcat);
+    $("fLocLabel").innerHTML = esc(t("fLocation")) + (must ? ' <span class="req">*</span>' : "");
+    $("fTitle").placeholder = t(cat.base === "stores" || cat.base === "pharmacies" ? "fTitleStore"
+                              : cat.base === "services" ? "fTitleVenue"
+                              : "fTitlePerson");
+    const isTransport = subcat === "transport";
+    $("fCarField").hidden = !isTransport;
+    $("fCarLabel").innerHTML = esc(t("carMake")) + (isTransport ? ' <span class="req">*</span>' : "");
+    if (!isTransport) $("fCar").value = "";
+  }
+  $("fCat").addEventListener("change", syncLevelSelect);
+  $("fLevel").addEventListener("change", fillSubSelect);
+  $("fSub").addEventListener("change", updateLocLabel);
+
+  $("fDesc").addEventListener("input", () => {
+    const n = $("fDesc").value.length;
+    const c = $("descCounter");
+    c.textContent = `${n} / 600`;
+    c.classList.toggle("over", n > 600);
+  });
+
+  function openAddModal() {
+    $("addForm").reset();
+    $("addErr").classList.remove("show");
+    $("descCounter").textContent = "0 / 600";
+    $("descCounter").classList.remove("over");
+    fillCatSelect();
+    openOv("addOverlay");
+  }
+
+  $("addForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const cat = catById($("fCat").value);
+    const groupId = cat.levels ? $("fLevel").value : cat.id;
+    const subcat = $("fSub").value;
+    const title = $("fTitle").value.trim();
+    const phone = $("fPhone").value.trim();
+    const location = $("fLoc").value.trim();
+    const carMake = $("fCar").value.trim();
+    const description = $("fDesc").value.trim();
+    const ttlMs = Number($("fExp").value) || 2592000000;
+
+    if (!title || !phone || !groupId) { banner($("addErr"), "fillRequired"); return; }
+    if (needsLocation(cat, subcat) && !location) { banner($("addErr"), "locRequired"); return; }
+    if (subcat === "transport" && !carMake) { banner($("addErr"), "carMakeRequired"); return; }
+    if (description.length > 600) { banner($("addErr"), "descLimit"); return; }
+
+    try {
+      await dbAdd({
+        type: cat.base === "stores" || cat.base === "pharmacies" ? "store"
+             : cat.base === "services" ? "service" : "person",
+        category: cat.base,
+        group: groupId,
+        subcategory: subcat,
+        carMake: subcat === "transport" ? carMake : "",
+        expiresAt: Date.now() + ttlMs,
+        title, phone, location, description
+      });
+      closeOv("addOverlay");
+      toast(t("toastAdded"));
+    } catch (err) {
+      console.error(err);
+      toast("⚠ " + ((err && err.code) || t("loadError")), "err");
+    }
+  });
+
+  /* ================= Удаление ================= */
+  $("list").addEventListener("click", e => {
+    const btn = e.target.closest(".row-del");
+    if (!btn) return;
+    pendingDeleteId = btn.dataset.id;
+    const p = state.docs.find(d => d.id === pendingDeleteId);
+    $("confirmText").textContent = t("confirmDesc").replace("{title}", p ? p.title : "");
+    openOv("confirmOverlay");
+  });
+
+  $("confirmDeleteBtn").addEventListener("click", async () => {
+    if (!pendingDeleteId) return;
+    try {
+      await dbRemove(pendingDeleteId);
+      toast(t("toastDeleted"));
+      if (state.detailId === pendingDeleteId) { closeOv("detailOverlay"); state.detailId = null; }
+    } catch (err) {
+      console.error(err);
+      toast("⚠ " + ((err && err.code) || t("loadError")), "err");
+    }
+    pendingDeleteId = null;
+    closeOv("confirmOverlay");
+  });
+
+  /* ================= Навигация ================= */
+  $("cats").addEventListener("click", e => {
+    const b = e.target.closest(".cat-pill");
+    if (!b) return;
+    state.cat = b.dataset.cat;
+    const cat = catById(state.cat);
+    state.level = levelsOf(cat)[0].id;
+    state.sub = "all";
+    state.levelSelected = !cat.levels;
+    renderCats(); renderSubs(); renderList();
+  });
+
+  $("subs").addEventListener("click", e => {
+    const subcard = e.target.closest("[data-subcard]");
+    if (subcard) { state.sub = subcard.dataset.subcard; renderSubs(); renderList(); return; }
+    const lvl = e.target.closest("[data-level]");
+    if (lvl) {
+      state.level = lvl.dataset.level;
+      state.sub = "all";
+      state.levelSelected = true;
+      renderSubs(); renderList();
+      return;
+    }
+    const chip = e.target.closest(".chip");
+    if (chip) { state.sub = chip.dataset.sub; renderSubs(); renderList(); return; }
+    if (e.target.closest("#addCardBtn")) openAddModal();
+  });
+
+  $("searchInput").addEventListener("input", e => {
+    state.search = e.target.value.trim();
+    $("searchBox").classList.toggle("live", !!state.search);
+    renderList();
+  });
+
+  $("langRu").addEventListener("click", () => setLang("ru"));
+  $("langAr").addEventListener("click", () => setLang("ar"));
+  $("langEn").addEventListener("click", () => setLang("en"));
+  function setLang(l) {
+    if (state.lang === l) return;
+    state.lang = l;
+    store.set("rakka_lang", l);
+    applyLang();
+  }
+
+  /* ============ Скролл-анимации и параллакс ============ */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => { if (en.isIntersecting) en.target.classList.add("vis"); });
+  }, { threshold: .12 });
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+
+  const moonEl = $("moon");
+  window.addEventListener("scroll", () => {
+    moonEl.style.marginTop = (window.scrollY * -0.18) + "px";
+  }, { passive: true });
+
+  /* ================= Инициализация ================= */
+  (async function init() {
+    try {
+      $("adminBtn").querySelector(".ic").innerHTML = icon("lock", 15);
+      $("searchIcon").innerHTML = icon("search", 18);
+      $("logoutIcon").innerHTML = icon("logout", 16);
+      document.querySelectorAll(".modal-close").forEach(b => b.innerHTML = icon("x", 18));
+
+      state.levelSelected = !catById(state.cat).levels;
+      applyLang();
+      renderAll();
+      startListener();
+    } catch (e) {
+      console.error(e);
+      toast("⚠ " + (e.message || "خطأ في التهيئة"), "err");
+    }
+  })();
+</script>
+</body>
+</html>
